@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: DawnPix Digital Photobooth API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: photobooth
+    description: Photobooth operations
+  - name: themes
+    description: Daily theme operations
 paths:
   /healthz:
     get:
@@ -24,6 +27,50 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /themes/daily:
+    get:
+      operationId: getDailyTheme
+      tags: [themes]
+      summary: Get today's daily theme
+      description: Returns Dani's Daily Theme challenge for today
+      responses:
+        "200":
+          description: Today's theme
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailyTheme"
+  /sessions:
+    post:
+      operationId: createSession
+      tags: [photobooth]
+      summary: Save a photobooth session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSessionRequest"
+      responses:
+        "201":
+          description: Session saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+    get:
+      operationId: listSessions
+      tags: [photobooth]
+      summary: List recent photobooth sessions
+      responses:
+        "200":
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +80,71 @@ components:
           type: string
       required:
         - status
-
+    DailyTheme:
+      type: object
+      properties:
+        id:
+          type: string
+        date:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        emoji:
+          type: string
+        colorHint:
+          type: string
+      required:
+        - id
+        - date
+        - title
+        - description
+        - emoji
+        - colorHint
+    CreateSessionRequest:
+      type: object
+      properties:
+        stripLayout:
+          type: integer
+          description: Number of photos in the strip (2, 3, or 4)
+        filter:
+          type: string
+          description: Applied mood filter name
+        frame:
+          type: string
+          description: Applied seasonal frame name
+        overlayText:
+          type: string
+          description: Custom text overlay
+        hasSparkles:
+          type: boolean
+          description: Whether sparkle effects were applied
+        dailyTheme:
+          type: string
+          description: Daily theme used if any
+      required:
+        - stripLayout
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+        stripLayout:
+          type: integer
+        filter:
+          type: string
+        frame:
+          type: string
+        overlayText:
+          type: string
+        hasSparkles:
+          type: boolean
+        dailyTheme:
+          type: string
+      required:
+        - id
+        - createdAt
+        - stripLayout

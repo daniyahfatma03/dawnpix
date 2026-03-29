@@ -1,0 +1,17 @@
+packages:
+  "framer-motion": "For playful UI animations, countdowns, and page transitions"
+  "html-to-image": "For rendering the final DOM photo strip (with CSS filters and frames) into a downloadable image"
+  "zustand": "For managing the multi-step photobooth session state without prop drilling"
+  "date-fns": "For formatting dates on the custom overlays"
+  "clsx": "For conditional class name merging"
+  "tailwind-merge": "For merging tailwind classes safely"
+
+images:
+  - path: "artifacts/dawnpix/public/images/y2k-bg.png"
+    description: "A fun, modern Y2K aesthetic background with holographic pastel pink, purple, and cyan gradients, floating sparkles, and soft 3D bubbles or stars."
+    aspect_ratio: "16:9"
+
+notes:
+  - Expecting API hooks to be importable from `@workspace/api-client-react`
+  - Camera access requires a secure context (localhost or HTTPS)
+  - html-to-image might have slight differences depending on browser, but handles CSS filters better than manual canvas drawing for complex DOM structures
