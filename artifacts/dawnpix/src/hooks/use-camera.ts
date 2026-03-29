@@ -2,25 +2,41 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 
 export function useCamera() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const startCamera = useCallback(async () => {
+    setIsReady(false);
+    setError(null);
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { 
+        video: {
           facingMode: "user",
           width: { ideal: 1080 },
-          height: { ideal: 1440 } // 3:4 aspect ratio preference
+          height: { ideal: 1440 },
         },
-        audio: false
+        audio: false,
       });
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-      setError(null);
+
+      streamRef.current = mediaStream;
+
+      const video = videoRef.current;
+      if (!video) return;
+
+      video.srcObject = mediaStream;
+
+      // Wait for the video to actually be ready to play before resolving
+      await new Promise<void>((resolve, reject) => {
+        video.onloadedmetadata = () => {
+          video.play().then(resolve).catch(reject);
+        };
+        video.onerror = () => reject(new Error("Video error"));
+        // Fallback timeout in case events don't fire
+        setTimeout(resolve, 3000);
+      });
+
+      setIsReady(true);
     } catch (err) {
       console.error("Camera access denied:", err);
       setError("Please allow camera access to use the photobooth! 📸");
@@ -28,54 +44,52 @@ export function useCamera() {
   }, []);
 
   const stopCamera = useCallback(() => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
-  }, [stream]);
+    setIsReady(false);
+  }, []);
 
-  const capture = useCallback(() => {
-    if (!videoRef.current) return null;
-    
+  const capture = useCallback((): string | null => {
     const video = videoRef.current;
-    const canvas = document.createElement('canvas');
-    
-    // Target a 3:4 portrait aspect ratio
-    const targetRatio = 3/4;
+    if (!video || !streamRef.current) return null;
+    if (video.readyState < 2) return null; // HAVE_CURRENT_DATA check
+
+    const targetRatio = 3 / 4;
     const videoRatio = video.videoWidth / video.videoHeight;
-    
+
     let drawWidth = video.videoWidth;
     let drawHeight = video.videoHeight;
     let offsetX = 0;
     let offsetY = 0;
 
     if (videoRatio > targetRatio) {
-      // Video is wider than 3:4 (e.g., 16:9 landscape)
       drawWidth = video.videoHeight * targetRatio;
       offsetX = (video.videoWidth - drawWidth) / 2;
     } else {
-      // Video is taller than 3:4
       drawHeight = video.videoWidth / targetRatio;
       offsetY = (video.videoHeight - drawHeight) / 2;
     }
 
-    canvas.width = 600;  // Standardized output width
-    canvas.height = 800; // Standardized output height
-    
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 800;
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
-    
-    // Mirror the image horizontally so it acts like a mirror
+
+    // Mirror horizontally so it looks like a real mirror
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    
+
     ctx.drawImage(
       video,
-      offsetX, offsetY, drawWidth, drawHeight, // Source crop
-      0, 0, canvas.width, canvas.height // Destination
+      offsetX, offsetY, drawWidth, drawHeight,
+      0, 0, canvas.width, canvas.height
     );
-    
-    return canvas.toDataURL('image/jpeg', 0.9);
+
+    return canvas.toDataURL('image/jpeg', 0.92);
   }, []);
 
   useEffect(() => {
@@ -90,6 +104,6 @@ export function useCamera() {
     stopCamera,
     capture,
     error,
-    isReady: !!stream
+    isReady,
   };
 }

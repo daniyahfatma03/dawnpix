@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: 'Quicksand', sans-serif;
-  --font-display: 'Fredoka', sans-serif;
+  --font-sans: 'Nunito', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -21,39 +22,92 @@
   --color-ring: hsl(var(--ring));
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
 
   --animate-float: float 6s ease-in-out infinite;
-  --animate-sparkle: sparkle 1.5s ease-in-out infinite;
   --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 :root {
-  /* Pastel Y2K / Photobooth Vibe */
-  --background: 330 100% 98%;      /* Very pale pink */
-  --foreground: 320 60% 20%;       /* Deep berry */
-  --primary: 330 85% 65%;          /* Hot pastel pink */
+  --background: 30 30% 97%;
+  --foreground: 20 15% 20%;
+  --card: 30 25% 99%;
+  --card-foreground: 20 15% 20%;
+  --card-border: 20 20% 90%;
+  --border: 20 20% 88%;
+  --input: 20 20% 85%;
+  --ring: 340 40% 75%;
+  --primary: 340 45% 70%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 270 80% 75%;        /* Lavender */
-  --secondary-foreground: 270 60% 20%;
-  --muted: 330 40% 94%;            /* Soft pink-grey */
-  --muted-foreground: 320 30% 50%;
-  --accent: 190 90% 65%;           /* Cyan/Holo */
-  --accent-foreground: 190 60% 20%;
-  --destructive: 350 85% 65%;
+  --secondary: 20 25% 90%;
+  --secondary-foreground: 20 15% 30%;
+  --muted: 30 20% 94%;
+  --muted-foreground: 20 10% 50%;
+  --accent: 350 35% 80%;
+  --accent-foreground: 20 15% 20%;
+  --popover: 30 25% 99%;
+  --popover-foreground: 20 15% 20%;
+  --popover-border: 20 20% 88%;
+  --destructive: 0 60% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 330 50% 90%;
-  --ring: 330 85% 65%;
-  --card: 0 0% 100%;
-  --card-foreground: 320 60% 20%;
+  --sidebar: 30 20% 96%;
+  --sidebar-foreground: 20 15% 20%;
+  --sidebar-border: 20 20% 88%;
+  --sidebar-primary: 340 45% 70%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 20 25% 90%;
+  --sidebar-accent-foreground: 20 15% 30%;
+  --sidebar-ring: 340 40% 75%;
+  --chart-1: 340 45% 70%;
+  --chart-2: 350 35% 80%;
+  --chart-3: 20 25% 90%;
+  --chart-4: 30 20% 94%;
+  --chart-5: 20 20% 88%;
+
+  --app-font-sans: 'Nunito', sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: Menlo, monospace;
+}
+
+.dark {
+  --background: 20 15% 12%;
+  --foreground: 30 30% 97%;
+  --card: 20 15% 14%;
+  --card-foreground: 30 30% 97%;
+  --border: 20 15% 22%;
+  --input: 20 15% 22%;
+  --ring: 340 40% 75%;
+  --primary: 340 45% 65%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 20 15% 20%;
+  --secondary-foreground: 30 30% 97%;
+  --muted: 20 15% 18%;
+  --muted-foreground: 20 10% 60%;
+  --accent: 350 35% 70%;
+  --accent-foreground: 30 30% 97%;
+  --popover: 20 15% 14%;
+  --popover-foreground: 30 30% 97%;
+  --destructive: 0 60% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --sidebar: 20 15% 14%;
+  --sidebar-foreground: 30 30% 97%;
+  --sidebar-border: 20 15% 22%;
+  --sidebar-primary: 340 45% 65%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 20 15% 20%;
+  --sidebar-accent-foreground: 30 30% 97%;
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground antialiased font-sans bg-[url('/images/y2k-bg.png')] bg-cover bg-fixed bg-center;
+    @apply bg-background text-foreground antialiased font-sans;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     @apply font-bold tracking-tight;
   }
 }
@@ -64,15 +118,9 @@
   100% { transform: translateY(0px); }
 }
 
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(45deg); }
-}
-
 /* Mood Filters */
 .filter-dreamy { filter: blur(0.5px) brightness(1.1) contrast(0.95) saturate(1.2); }
 .filter-vintage { filter: sepia(0.5) contrast(1.1) brightness(0.9) saturate(0.8); }
-.filter-y2k { filter: saturate(1.8) hue-rotate(-10deg) contrast(1.1); }
 .filter-dark { filter: brightness(0.7) contrast(1.4) saturate(0.5); }
 .filter-cute { filter: saturate(1.3) brightness(1.15) sepia(0.2) hue-rotate(-20deg); }
 
