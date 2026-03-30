@@ -53,7 +53,7 @@ export default function Home() {
               <div className="flex-1 space-y-2 text-center sm:text-left">
                 <div className="flex items-center justify-center sm:justify-start gap-2 text-primary font-bold">
                   <Heart size={20} className="fill-current text-primary" />
-                  <span>Today's Theme</span>
+                  <span>Dani's Theme of the Day</span>
                 </div>
                 {isLoading ? (
                   <div className="h-16 flex items-center justify-center sm:justify-start">
