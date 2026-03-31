@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const SparkleIcon = ({ className }: { className?: string }) => (
+const SparkleIcon = ({ className, style }: { className?: string; style?: React.CSSProperties }) => (
   <svg 
     viewBox="0 0 160 160" 
     fill="none" 

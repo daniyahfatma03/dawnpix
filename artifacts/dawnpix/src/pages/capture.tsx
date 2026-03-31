@@ -80,13 +80,17 @@ export default function Capture() {
   useEffect(() => {
     if (captureState !== 'countdown') return;
 
+    let cleanup: (() => void) | undefined;
+
     if (count > 0) {
       const timer = setTimeout(() => setCount(c => c - 1), 1000);
-      return () => clearTimeout(timer);
+      cleanup = () => clearTimeout(timer);
     } else {
       setCaptureState('flash');
-      performCapture();
+      void performCapture();
     }
+
+    return cleanup;
   }, [captureState, count, performCapture]);
 
   const selectBurstPhoto = useCallback((photo: string) => {
