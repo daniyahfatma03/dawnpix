@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'wouter';
-import { useGetDailyTheme } from '@workspace/api-client-react';
+import { useDailyTheme } from '@/hooks/use-daily-theme';
 import { Layout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Camera, Heart, ArrowRight } from 'lucide-react';
 import { useSessionStore } from '@/store/use-session-store';
 
 export default function Home() {
-  const { data: dailyTheme, isLoading } = useGetDailyTheme();
+  const dailyTheme = useDailyTheme();
   const resetSession = useSessionStore(s => s.reset);
 
   // Reset session when arriving home
@@ -55,18 +55,8 @@ export default function Home() {
                   <Heart size={20} className="fill-current text-primary" />
                   <span>Dani's Theme of the Day</span>
                 </div>
-                {isLoading ? (
-                  <div className="h-16 flex items-center justify-center sm:justify-start">
-                    <span className="animate-pulse text-muted-foreground">Loading theme...</span>
-                  </div>
-                ) : dailyTheme ? (
-                  <>
-                    <h3 className="text-2xl font-sans font-bold">{dailyTheme.emoji} {dailyTheme.title}</h3>
-                    <p className="text-muted-foreground text-sm">{dailyTheme.description}</p>
-                  </>
-                ) : (
-                  <p className="text-muted-foreground">Could not load today's theme.</p>
-                )}
+                <h3 className="text-2xl font-sans font-bold">{dailyTheme.emoji} {dailyTheme.title}</h3>
+                <p className="text-muted-foreground text-sm">{dailyTheme.description}</p>
               </div>
               
               <Link href="/setup" className="w-full sm:w-auto">
